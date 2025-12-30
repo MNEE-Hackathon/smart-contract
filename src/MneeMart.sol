@@ -139,6 +139,8 @@ contract MneeMart is Ownable, ReentrancyGuard
     );
 
     emit ProductPurchased( _productId,msg.sender,product.seller,product.price,platformFee);
+  
+
 }
 
     
