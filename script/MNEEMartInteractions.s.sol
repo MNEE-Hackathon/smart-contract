@@ -8,39 +8,39 @@ import "../test/mock/MNEEMock.sol";
 contract MneeMartFlowScript is Script {
     MneeMart public mart;
     MNEEToken public mneeToken;
-    
+
     // Addresses
     address public owner;
     address public seller1;
     address public seller2;
     address public buyer1;
     address public buyer2;
-    
+
     // Platform fee: 5%
     uint256 public constant PLATFORM_FEE = 500;
-    
+
     // Helper functions
     function dollars(uint256 amount) internal pure returns (uint256) {
         return amount * 1e18;
     }
-    
+
     function cents(uint256 amount) internal pure returns (uint256) {
         return (amount * 1e18) / 100;
     }
-    
+
     function run() external {
         // Get deployer private key from environment
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         owner = vm.addr(deployerPrivateKey);
-        
+
         console.log("=================================================");
         console.log("MneeMart Complete Flow Script");
         console.log("=================================================");
         console.log("Owner Address:", owner);
         console.log("");
-        
+
         vm.startBroadcast(deployerPrivateKey);
-        
+
         // ============================================
         // STEP 1: Deploy MNEE Token
         // ============================================
@@ -49,7 +49,7 @@ contract MneeMartFlowScript is Script {
 
         console.log("MNEE Token deployed at:", address(mneeToken));
         console.log("");
-        
+
         // ============================================
         // STEP 2: Deploy MneeMart Contract
         // ============================================
@@ -58,42 +58,42 @@ contract MneeMartFlowScript is Script {
         console.log("MneeMart deployed at:", address(mart));
         console.log("Platform Fee:", PLATFORM_FEE, "basis points (5%)");
         console.log("");
-        
+
         // ============================================
         // STEP 3: Setup Test Accounts
         // ============================================
         console.log("Step 3: Setting up test accounts...");
-        
+
         // --- NEW: Use real private keys from environment ---
         uint256 seller1PrivateKey = vm.envUint("SELLER1_PRIVATE_KEY");
         uint256 seller2PrivateKey = vm.envUint("SELLER2_PRIVATE_KEY");
-        uint256 buyer1PrivateKey  = vm.envUint("BUYER1_PRIVATE_KEY");
-        uint256 buyer2PrivateKey  = vm.envUint("BUYER2_PRIVATE_KEY");
+        uint256 buyer1PrivateKey = vm.envUint("BUYER1_PRIVATE_KEY");
+        uint256 buyer2PrivateKey = vm.envUint("BUYER2_PRIVATE_KEY");
 
         seller1 = vm.addr(seller1PrivateKey);
         seller2 = vm.addr(seller2PrivateKey);
-        buyer1  = vm.addr(buyer1PrivateKey);
-        buyer2  = vm.addr(buyer2PrivateKey);
+        buyer1 = vm.addr(buyer1PrivateKey);
+        buyer2 = vm.addr(buyer2PrivateKey);
         // --- END NEW SECTION ---
-        
+
         console.log("Seller 1:", seller1);
         console.log("Seller 2:", seller2);
         console.log("Buyer 1:", buyer1);
         console.log("Buyer 2:", buyer2);
         console.log("");
-        
+
         // Mint tokens to all participants
         console.log("Minting MNEE tokens to participants...");
         mneeToken.mint(seller1, dollars(10000)); // $10,000
         mneeToken.mint(seller2, dollars(10000)); // $10,000
-        mneeToken.mint(buyer1, dollars(10000));  // $10,000
-        mneeToken.mint(buyer2, dollars(10000));  // $10,000
-        
+        mneeToken.mint(buyer1, dollars(10000)); // $10,000
+        mneeToken.mint(buyer2, dollars(10000)); // $10,000
+
         console.log("Each participant received: 10,000 MNEE ($10,000)");
         console.log("");
-        
+
         vm.stopBroadcast();
-        
+
         // ============================================
         // STEP 4: Sellers List Products
         // ============================================
@@ -104,21 +104,13 @@ contract MneeMartFlowScript is Script {
         vm.startBroadcast(seller1PrivateKey);
 
         console.log("Seller 1 listing products:");
-        uint256 product1 = mart.listProduct(
-            "QmEbook12345",
-            dollars(20),
-            "Complete Solidity Guide"
-        );
+        uint256 product1 = mart.listProduct("QmEbook12345", dollars(20), "Complete Solidity Guide");
         console.log("  - Product ID:", product1);
         console.log("    Name: Complete Solidity Guide");
         console.log("    Price: $20.00");
         console.log("    CID: QmEbook12345");
 
-        uint256 product2 = mart.listProduct(
-            "QmCourse67890",
-            dollars(99),
-            "Web3 Development Masterclass"
-        );
+        uint256 product2 = mart.listProduct("QmCourse67890", dollars(99), "Web3 Development Masterclass");
         console.log("  - Product ID:", product2);
         console.log("    Name: Web3 Development Masterclass");
         console.log("    Price: $99.00");
@@ -131,21 +123,13 @@ contract MneeMartFlowScript is Script {
         vm.startBroadcast(seller2PrivateKey);
 
         console.log("Seller 2 listing products:");
-        uint256 product3 = mart.listProduct(
-            "QmTemplate111",
-            cents(1999),
-            "NFT Marketplace Template"
-        );
+        uint256 product3 = mart.listProduct("QmTemplate111", cents(1999), "NFT Marketplace Template");
         console.log("  - Product ID:", product3);
         console.log("    Name: NFT Marketplace Template");
         console.log("    Price: $19.99");
         console.log("    CID: QmTemplate111");
 
-        uint256 product4 = mart.listProduct(
-            "QmAudio222",
-            cents(499),
-            "Royalty-Free Music Pack"
-        );
+        uint256 product4 = mart.listProduct("QmAudio222", cents(499), "Royalty-Free Music Pack");
         console.log("  - Product ID:", product4);
         console.log("    Name: Royalty-Free Music Pack");
         console.log("    Price: $4.99");
@@ -387,14 +371,8 @@ contract MneeMartFlowScript is Script {
 
     // Helper function to display product details
     function displayProductDetails(uint256 productId) internal view {
-        (
-            uint256 id,
-            address seller,
-            uint256 price,
-            string memory name,
-            bool active,
-            uint256 salesCount
-        ) = mart.getProduct(productId);
+        (uint256 id, address seller, uint256 price, string memory name, bool active, uint256 salesCount) =
+            mart.getProduct(productId);
 
         console.log("Product ID:", id);
         console.log("  Name:", name);
@@ -420,17 +398,9 @@ contract MneeMartFlowScript is Script {
         uint256 cents = (amount % 1e18) * 100 / 1e18;
 
         if (cents < 10) {
-            return string(abi.encodePacked(
-                vm.toString(dollars),
-                ".0",
-                vm.toString(cents)
-            ));
+            return string(abi.encodePacked(vm.toString(dollars), ".0", vm.toString(cents)));
         } else {
-            return string(abi.encodePacked(
-                vm.toString(dollars),
-                ".",
-                vm.toString(cents)
-            ));
+            return string(abi.encodePacked(vm.toString(dollars), ".", vm.toString(cents)));
         }
     }
 }

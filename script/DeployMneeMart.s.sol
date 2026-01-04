@@ -15,10 +15,7 @@ contract DeployMneeMart is Script {
 
         vm.startBroadcast(deployerPrivateKey);
 
-        MneeMart mart = new MneeMart(
-            mneeToken,
-            platformFeeBps
-        );
+        MneeMart mart = new MneeMart(mneeToken, platformFeeBps);
 
         vm.stopBroadcast();
 
